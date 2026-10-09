@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS Logic Workout: Інтерактивний тренажер та лабораторія</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-alt: #172033;
+      --border: #243048;
+      --border-focus: #38bdf8;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --error: #ef4444;
+      --editor-bg: #070b14;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 16px;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-title-box h1 {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(to right, #38bdf8, #818cf8, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-title-box p {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    .header-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+    .badge-accent {
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--accent);
+      border-color: rgba(245, 158, 11, 0.25);
+    }
+
+    /* Top Tabs */
+    .top-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+    }
+    .tab-btn.active {
+      background: var(--card-alt);
+      color: var(--primary);
+      border-color: var(--border);
+    }
+
+    /* Views */
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+
+    /* Layout for Trainer */
+    .trainer-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .trainer-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Sidebar */
+    .sidebar-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      position: sticky;
+      top: 16px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+    .module-select-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .mod-tab-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid transparent;
+      color: var(--text);
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s;
+    }
+    .mod-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .mod-tab-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .mod-counter {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 2px 6px;
+      border-radius: 9999px;
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text-muted);
+    }
+
+    .tasks-list-box h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .tasks-pill-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+    .task-select-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      text-align: left;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text);
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: all 0.15s;
+    }
+    .task-select-btn:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .task-select-btn.active {
+      background: var(--card-alt);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .task-status-dot {
+      font-size: 12px;
+    }
+
+    /* Main Workspace */
+    .workspace-pane {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .task-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .level-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .level-tag.easy {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .level-tag.hard {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--error);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .task-desc-section {
+      background: var(--card-alt);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .task-desc-section p { line-height: 1.5; }
+    .task-desc-section ul { padding-left: 20px; }
+    .task-desc-section li { margin-bottom: 4px; }
+    .task-desc-section code {
+      font-family: var(--font-mono);
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1px 4px;
+      border-radius: 4px;
+      color: #7dd3fc;
+    }
+
+    .theory-hint-box {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px dashed rgba(245, 158, 11, 0.35);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #fde68a;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    /* Code Editor Container */
+    .editor-wrapper {
+      position: relative;
+      margin-top: 4px;
+    }
+    .editor-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0d121f;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      padding: 6px 12px;
+      border-radius: 10px 10px 0 0;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .editor-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .editor-save-indicator {
+      color: var(--success);
+      display: none;
+    }
+
+    .code-editor-textarea {
+      width: 100%;
+      height: 230px;
+      background: var(--editor-bg);
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      border-radius: 0 0 10px 10px;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+      outline: none;
+      tab-size: 2;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+    }
+    .code-editor-textarea:focus {
+      border-color: var(--border-focus);
+    }
+
+    .editor-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary);
+      color: #090d16;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s ease;
+    }
+    .btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    /* Test Results Cards */
+    .test-results-container {
+      margin-top: 8px;
+    }
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .results-summary-badge {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .badge-pass { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .badge-fail { background: rgba(239, 68, 68, 0.2); color: var(--error); }
+    .badge-idle { background: rgba(255, 255, 255, 0.08); color: var(--text-muted); }
+
+    .case-item {
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .case-item.case-pass {
+      border-left: 4px solid var(--success);
+    }
+    .case-item.case-fail {
+      border-left: 4px solid var(--error);
+      background: rgba(239, 68, 68, 0.06);
+    }
+    .case-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .case-label { font-weight: 600; color: #fff; }
+    .case-diff {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .diff-expected { color: #34d399; }
+    .diff-actual { color: #f87171; }
+
+    /* Virtual Console Output */
+    .console-box {
+      background: #060911;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #93c5fd;
+      max-height: 120px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      margin-top: 8px;
+    }
+    .console-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    /* I/O Lab Grid */
+    .io-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .io-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .io-card h3 {
+      font-size: 14px;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .io-card p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .io-output-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #cbd5e1;
+      min-height: 48px;
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+    }
+
+    /* Full Suite View */
+    .progress-box {
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #10b981);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+    .terminal-box {
+      background: #060911;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #a5f3fc;
+      max-height: 380px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-title-box">
+        <h1>JS Logic, Types & Operators Workout</h1>
+        <p>Інтерактивний тренажер для студентів: редагуйте код прямо в браузері, тестуйте розв'язки на уроці без зайвих підказок IDE</p>
+      </div>
+      <div class="header-badges">
+        <span class="badge">🎓 Студентський практикум</span>
+        <span class="badge">⚡ In-Browser Sandbox</span>
+        <span class="badge badge-accent">🔥 60 Завдань</span>
+      </div>
+    </header>
+
+    <!-- Top Navigation Tabs -->
+    <nav class="top-nav">
+      <button class="tab-btn active" id="tabTrainer" onclick="switchMainTab('trainer')">
+        💻 Інтерактивний тренажер коду
+      </button>
+      <button class="tab-btn" id="tabIoLab" onclick="switchMainTab('iolab')">
+        🎮 Лабораторія alert/prompt/confirm
+      </button>
+      <button class="tab-btn" id="tabFullSuite" onclick="switchMainTab('fullsuite')">
+        📊 Масова перевірка (Всі 60 завдань)
+      </button>
+      <button class="tab-btn" id="tabReadme" onclick="switchMainTab('readme')">
+        📖 Довідник та інструкція (README)
+      </button>
+    </nav>
+
+    <!-- VIEW 1: Live Interactive Code Trainer -->
+    <section class="view-section active" id="viewTrainer">
+      <div class="trainer-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar-card">
+          <div class="module-select-tabs" id="moduleNavTabs">
+            <!-- Rendered by JS: Module 1..6 tabs -->
+          </div>
+
+          <div class="tasks-list-box">
+            <h3 id="sidebarTasksTitle">Завдання модуля</h3>
+            <div class="tasks-pill-grid" id="tasksNavList">
+              <!-- Rendered by JS: 10 task buttons -->
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Task Workspace -->
+        <main class="workspace-pane">
+          <div class="card">
+            <div class="task-header">
+              <div>
+                <span class="level-tag easy" id="taskLevelBadge">Легкий рівень</span>
+                <h2 class="task-title" id="taskTitle">Завантаження завдання...</h2>
+              </div>
+              <div id="taskModuleLabel" style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
+                Модуль 1
+              </div>
+            </div>
+
+            <!-- Task Description & Requirements -->
+            <div class="task-desc-section" id="taskDescriptionBox">
+              <!-- Dynamic task desc, requirements and examples -->
+            </div>
+
+            <!-- Syntax / Theory Hint -->
+            <div class="theory-hint-box" id="taskTheoryHintBox" style="margin-top: 10px;">
+              <span>💡</span>
+              <div id="taskTheoryHintText">
+                Шпаргалка завантажується...
+              </div>
+            </div>
+
+            <!-- Live Code Editor -->
+            <div class="editor-wrapper" style="margin-top: 14px;">
+              <div class="editor-toolbar">
+                <div class="editor-title">
+                  <span>📝 Редактор коду розв'язку:</span>
+                  <strong id="editorFileName" style="color: var(--primary);">01-io-and-types.js</strong>
+                </div>
+                <div>
+                  <span id="saveIndicator" class="editor-save-indicator">✓ Збережено локально</span>
+                  <span style="opacity: 0.6;">(Ctrl+Enter для перевірки)</span>
+                </div>
+              </div>
+
+              <textarea id="codeEditor" class="code-editor-textarea" spellcheck="false" placeholder="// Пишіть код тут..."></textarea>
+
+              <div class="editor-actions">
+                <div class="btn-group">
+                  <button class="btn" id="runCurrentTestBtn" onclick="runActiveTaskTest()">
+                    ▶️ Перевірити моє рішення
+                  </button>
+                  <button class="btn btn-secondary" onclick="resetActiveTaskCode()">
+                    🔄 Скинути до шаблону
+                  </button>
+                  <button class="btn btn-secondary" onclick="copyActiveCodeToClipboard()">
+                    📋 Скопіювати для файлу src/
+                  </button>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);" id="editorShortStatus">
+                  Збережено в браузері
+                </div>
+              </div>
+            </div>
+
+            <!-- Test Results View -->
+            <div class="test-results-container">
+              <div class="results-header">
+                <span>Результати тестів:</span>
+                <span class="results-summary-badge badge-idle" id="resultsSummaryBadge">Очікує перевірки</span>
+              </div>
+              <div id="testCasesResultsList">
+                <div style="font-size: 12px; color: var(--text-muted); padding: 8px;">
+                  Натисніть "▶️ Перевірити моє рішення" або комбінацію клавіш Ctrl + Enter для перевірки розв'язку.
+                </div>
+              </div>
+            </div>
+
+            <!-- Virtual Console Box -->
+            <div style="margin-top: 12px;">
+              <div class="console-title">Вивід console.log у вашій функції:</div>
+              <div class="console-box" id="virtualConsoleBox">Консоль чиста. Додайте console.log(...) у свій код, щоб побачити проміжні змінні під час тесту.</div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <!-- VIEW 2: Interactive I/O Laboratory -->
+    <section class="view-section" id="viewIoLab">
+      <div class="card">
+        <h2>🎮 Лабораторія діалогових вікон браузера (alert / prompt / confirm)</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+          Спробуйте взаємодію з користувачем наживо. Зверніть увагу, як браузер передає типи даних та що відбувається при натисканні Cancel або Esc.
+        </p>
+
+        <!-- Mode Toggle -->
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 12px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); padding: 10px 14px; border-radius: 8px; font-size: 12px;">
+          <span style="font-weight: 700; color: var(--primary);">Режим діалогових вікон:</span>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="radio" name="ioModeRadio" value="custom" checked onchange="setIoMode('custom')">
+            <span>✨ Вбудоване модальне вікно (Надійно в IDE / Zoom / Webview)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="radio" name="ioModeRadio" value="native" onchange="setIoMode('native')">
+            <span>🌐 Системне вікно браузера (window.prompt)</span>
+          </label>
+        </div>
+
+        <div class="io-grid">
+          <!-- Card 1: prompt() -->
+          <div class="io-card">
+            <div>
+              <h3>1. prompt() — Введення тексту</h3>
+              <p>Запитує у користувача текст. Завжди повертає <code>string</code> або <code>null</code> при натисканні Cancel.</p>
+              <div class="io-output-box" id="promptOut">Результат з'явиться тут...</div>
+            </div>
+            <button class="btn btn-secondary" onclick="experimentPrompt()">Спробувати prompt()</button>
+          </div>
+
+          <!-- Card 2: confirm() -->
+          <div class="io-card">
+            <div>
+              <h3>2. confirm() — Питання так/ні</h3>
+              <p>Відображає вікно з вибором "ОК" (<code>true</code>) та "Скасувати" (<code>false</code>). Повертає чистий <code>boolean</code>.</p>
+              <div class="io-output-box" id="confirmOut">Результат з'явиться тут...</div>
+            </div>
+            <button class="btn btn-secondary" onclick="experimentConfirm()">Спробувати confirm()</button>
+          </div>
+
+          <!-- Card 3: alert() -->
+          <div class="io-card">
+            <div>
+              <h3>3. alert() — Повідомлення</h3>
+              <p>Блокує виконання сторінки до закриття вікна. Завжди повертає значення <code>undefined</code>.</p>
+              <div class="io-output-box" id="alertOut">Результат з'явиться тут...</div>
+            </div>
+            <button class="btn btn-secondary" onclick="experimentAlert()">Спробувати alert()</button>
+          </div>
+
+          <!-- Card 4: Interactive Quest -->
+          <div class="io-card">
+            <div>
+              <h3>4. Міні-квест "Перепустка в IT"</h3>
+              <p>Послідовний діалог: запит імені, року народження, згоди з правилами та розрахунок віку за формулою.</p>
+              <div class="io-output-box" id="questOut">Пройдіть квест для виводу...</div>
+            </div>
+            <button class="btn" onclick="experimentQuest()">Запустити міні-квест</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal Dialog Simulation for I/O Lab -->
+    <div id="ioModalBackdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); z-index:9999; align-items:center; justify-content:center;">
+      <div id="ioModalBox" style="background:#111827; border:1px solid #38bdf8; border-radius:12px; padding:22px; max-width:440px; width:90%; box-shadow:0 12px 36px rgba(0,0,0,0.6);">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <span id="ioModalIcon" style="font-size:18px;">💬</span>
+          <h4 id="ioModalTitle" style="color:#fff; font-size:15px; font-weight:700;">Повідомлення</h4>
+        </div>
+        <p id="ioModalMessage" style="font-size:13px; color:#cbd5e1; margin-bottom:14px; line-height:1.5; white-space:pre-wrap;"></p>
+        <input id="ioModalInput" type="text" style="display:none; width:100%; background:#070b14; border:1px solid #243048; color:#fff; padding:9px 12px; border-radius:6px; font-family:var(--font-mono); font-size:13px; margin-bottom:16px; outline:none;" />
+        <div style="display:flex; justify-content:flex-end; gap:8px;">
+          <button id="ioModalCancelBtn" class="btn btn-secondary" style="display:none;">Скасувати</button>
+          <button id="ioModalOkBtn" class="btn">ОК</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: Full Suite Mass Runner -->
+    <section class="view-section" id="viewFullSuite">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <h2>📊 Масова перевірка всіх 60 завдань проекту</h2>
+          <button class="btn" onclick="runMassSuiteRunner()">
+            ▶️ Запустити повну перевірку (Всі 6 модулів)
+          </button>
+        </div>
+
+        <div class="progress-box" style="margin-top: 14px;">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="massProgressBar"></div>
+          </div>
+          <div class="progress-stats">
+            <span id="massProgressSummary">Прогрес: 0 / 60 завдань вирішено (0%)</span>
+            <span id="massProgressRate">Очікує запуску</span>
+          </div>
+        </div>
+
+        <div class="terminal-box" id="massTerminalLog">
+Натисніть кнопку "▶️ Запустити повну перевірку", щоб протестувати всі 60 завдань на основі збереженого коду в браузері або початкових файлів у src/.
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: Documentation & Guide -->
+    <section class="view-section" id="viewReadme">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+          <h2>📖 Повний теоретичний довідник та інструкція з запуску</h2>
+          <a href="./README.md" target="_blank" class="btn btn-secondary" style="text-decoration: none;">
+            ↗️ Відкрити сирий README.md
+          </a>
+        </div>
+        <div id="readmeContentBox" style="background: #070b14; border: 1px solid var(--border); border-radius: 10px; padding: 20px; font-family: var(--font-mono); font-size: 12px; line-height: 1.7; color: #cbd5e1; max-height: 75vh; overflow-y: auto; white-space: pre-wrap;">
+Завантаження інструкції...
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SCRIPT -->
+  <script type="module">
+    import * as m1 from './src/01-io-and-types.js';
+    import * as m2 from './src/02-coercion.js';
+    import * as m3 from './src/03-comparisons.js';
+    import * as m4 from './src/04-logical-operators.js';
+    import * as m5 from './src/05-ternary.js';
+    import * as m6 from './src/06-boss-challenges.js';
+
+    // Module catalog with complete definitions, starter templates, theory hints, and test cases
+    import { workoutCatalog } from './catalog.js';
+
+    let currentModuleId = 'm1';
+    let currentTaskId = '1.1';
+    let ioDialogMode = 'custom';
+    let readmeLoaded = false;
+
+    window.setIoMode = (mode) => {
+      ioDialogMode = mode;
+    };
+
+    async function loadReadmeContent() {
+      if (readmeLoaded) return;
+      try {
+        const res = await fetch('./README.md');
+        const text = await res.text();
+        document.getElementById('readmeContentBox').textContent = text;
+        readmeLoaded = true;
+      } catch (e) {
+        document.getElementById('readmeContentBox').textContent = 'Помилка завантаження README.md: ' + e.message;
+      }
+    }
+
+    // Global utility: deep equality comparison
+    window.deepEqual = function deepEqual(a, b) {
+      if (Object.is(a, b)) return true;
+      if (typeof a !== 'object' || a === null || typeof b !== 'object' || b === null) return false;
+      const keysA = Object.keys(a);
+      const keysB = Object.keys(b);
+      if (keysA.length !== keysB.length) return false;
+      return keysA.every(k => Object.prototype.hasOwnProperty.call(b, k) && deepEqual(a[k], b[k]));
+    };
+
+    // Tab Switching
+    window.switchMainTab = (tab) => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+
+      if (tab === 'trainer') {
+        document.getElementById('tabTrainer').classList.add('active');
+        document.getElementById('viewTrainer').classList.add('active');
+      } else if (tab === 'iolab') {
+        document.getElementById('tabIoLab').classList.add('active');
+        document.getElementById('viewIoLab').classList.add('active');
+      } else if (tab === 'fullsuite') {
+        document.getElementById('tabFullSuite').classList.add('active');
+        document.getElementById('viewFullSuite').classList.add('active');
+      } else if (tab === 'readme') {
+        document.getElementById('tabReadme').classList.add('active');
+        document.getElementById('viewReadme').classList.add('active');
+        loadReadmeContent();
+      }
+    };
+
+    // Custom Modal System
+    function showModalDialog({ title, icon, message, isPrompt, isConfirm, defaultValue }) {
+      return new Promise((resolve) => {
+        const backdrop = document.getElementById('ioModalBackdrop');
+        const titleEl = document.getElementById('ioModalTitle');
+        const iconEl = document.getElementById('ioModalIcon');
+        const msgEl = document.getElementById('ioModalMessage');
+        const inputEl = document.getElementById('ioModalInput');
+        const okBtn = document.getElementById('ioModalOkBtn');
+        const cancelBtn = document.getElementById('ioModalCancelBtn');
+
+        titleEl.textContent = title;
+        iconEl.textContent = icon || '💬';
+        msgEl.textContent = message;
+
+        if (isPrompt) {
+          inputEl.style.display = 'block';
+          inputEl.value = defaultValue || '';
+          cancelBtn.style.display = 'inline-flex';
+        } else if (isConfirm) {
+          inputEl.style.display = 'none';
+          cancelBtn.style.display = 'inline-flex';
+        } else {
+          inputEl.style.display = 'none';
+          cancelBtn.style.display = 'none';
+        }
+
+        backdrop.style.display = 'flex';
+
+        if (isPrompt) {
+          setTimeout(() => {
+            inputEl.focus();
+            inputEl.select();
+          }, 50);
+        } else {
+          setTimeout(() => { okBtn.focus(); }, 50);
+        }
+
+        const cleanup = () => {
+          backdrop.style.display = 'none';
+          okBtn.onclick = null;
+          cancelBtn.onclick = null;
+          document.removeEventListener('keydown', keyHandler);
+        };
+
+        const handleOk = () => {
+          const val = inputEl.value;
+          cleanup();
+          if (isPrompt) resolve(val);
+          else if (isConfirm) resolve(true);
+          else resolve(undefined);
+        };
+
+        const handleCancel = () => {
+          cleanup();
+          if (isPrompt) resolve(null);
+          else if (isConfirm) resolve(false);
+          else resolve(undefined);
+        };
+
+        const keyHandler = (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            handleOk();
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            handleCancel();
+          }
+        };
+
+        okBtn.onclick = handleOk;
+        cancelBtn.onclick = handleCancel;
+        document.addEventListener('keydown', keyHandler);
+      });
+    }
+
+    async function appPrompt(message, defaultValue = '') {
+      if (ioDialogMode === 'custom') {
+        return showModalDialog({
+          title: 'prompt() — Введення даних',
+          icon: '📝',
+          message,
+          defaultValue,
+          isPrompt: true
+        });
+      } else {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            const start = performance.now();
+            const res = window.prompt(message, defaultValue);
+            const elapsed = performance.now() - start;
+            if (res === null && elapsed < 80) {
+              console.warn('Browser auto-dismissed prompt.');
+            }
+            resolve(res);
+          }, 60);
+        });
+      }
+    }
+
+    async function appConfirm(message) {
+      if (ioDialogMode === 'custom') {
+        return showModalDialog({
+          title: 'confirm() — Підтвердження',
+          icon: '❓',
+          message,
+          isConfirm: true
+        });
+      } else {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            const res = window.confirm(message);
+            resolve(res);
+          }, 60);
+        });
+      }
+    }
+
+    async function appAlert(message) {
+      if (ioDialogMode === 'custom') {
+        return showModalDialog({
+          title: 'alert() — Повідомлення',
+          icon: '📢',
+          message
+        });
+      } else {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            window.alert(message);
+            resolve(undefined);
+          }, 60);
+        });
+      }
+    }
+
+    // I/O Laboratory Handlers
+    window.experimentPrompt = async () => {
+      const out = document.getElementById('promptOut');
+      out.textContent = 'Очікування введення...';
+      const input = await appPrompt('Введіть будь-яке число або текст (або натисніть Cancel):', '42');
+      if (input === null) {
+        out.textContent = `❌ Користувач натиснув Cancel!\nЗначення: null\nТип: ${typeof input}`;
+      } else {
+        const trimmed = input.trim();
+        const asNum = Number(trimmed);
+        out.textContent = `✅ Отримано: "${input}"\nТип: ${typeof input}\nОчищено .trim(): "${trimmed}"\nNumber(): ${asNum} (${typeof asNum})`;
+      }
+    };
+
+    window.experimentConfirm = async () => {
+      const out = document.getElementById('confirmOut');
+      out.textContent = 'Очікування вибору...';
+      const res = await appConfirm('Чи готові ви перейти до вивчення логіки в JavaScript?');
+      out.textContent = res
+        ? `✅ Обрано "ОК"!\nПовернуто: true (boolean)\nУмова if (res) виконується.`
+        : `❌ Обрано "Скасувати"!\nПовернуто: false (boolean)\nУмова if (res) НЕ виконується.`;
+    };
+
+    window.experimentAlert = async () => {
+      const out = document.getElementById('alertOut');
+      out.textContent = 'Повідомлення відкрито...';
+      const start = performance.now();
+      await appAlert('Це модальне повідомлення alert()!\nЗверніть увагу: до натискання ОК виконання коду призупинено.');
+      const duration = Math.round(performance.now() - start);
+      out.textContent = `📢 Вікно закрито через ${duration} мс.\nПовернуте значення alert(): undefined (тип: undefined)`;
+    };
+
+    window.experimentQuest = async () => {
+      const out = document.getElementById('questOut');
+      out.textContent = 'Проходження квесту...';
+      const name = await appPrompt('Крок 1: Як вас звати?');
+      if (!name || name.trim() === '') {
+        await appAlert('Імʼя не введено або натиснуто Cancel!');
+        out.textContent = '❌ Діалог скасовано на кроці імені.';
+        return;
+      }
+
+      const birthYearStr = await appPrompt(`Привіт, ${name.trim()}! Крок 2: Введіть ваш рік народження (наприклад, 2008):`);
+      const birthYear = Number(birthYearStr);
+      if (!birthYearStr || Number.isNaN(birthYear) || birthYear < 1920 || birthYear > 2026) {
+        await appAlert('Некоректний рік народження!');
+        out.textContent = '❌ Помилка: невірний рік.';
+        return;
+      }
+
+      const age = 2026 - birthYear;
+      const agree = await appConfirm(`Вам орієнтовно ${age} р. Крок 3: Чи погоджуєтеся ви пройти всі 60 завдань тренажера?`);
+
+      await appAlert(agree
+        ? `🎉 Чудово, ${name.trim()}! Бажаємо успіхів у вирішенні всіх модулів!`
+        : `Не бійтеся складнощів, ${name.trim()}! Тренажер допоможе розібратися.`);
+
+      out.textContent = `👤 Студент: ${name.trim()}\n🎂 Вік: ${age} р.\n🤝 Згода: ${agree ? 'Так' : 'Ні'}\nДіалог завершено успішно!`;
+    };
+
+    // Render Modules & Tasks navigation
+    function initTrainerUI() {
+      const modNav = document.getElementById('moduleNavTabs');
+      modNav.innerHTML = '';
+
+      workoutCatalog.forEach(mod => {
+        const btn = document.createElement('button');
+        btn.className = `mod-tab-btn ${mod.id === currentModuleId ? 'active' : ''}`;
+        btn.id = `modBtn-${mod.id}`;
+        btn.onclick = () => selectModule(mod.id);
+
+        const savedStats = getModulePassCount(mod);
+        btn.innerHTML = `
+          <span>${mod.shortTitle}</span>
+          <span class="mod-counter" id="modCounter-${mod.id}">${savedStats}/${mod.tasks.length}</span>
+        `;
+        modNav.appendChild(btn);
+      });
+
+      renderTasksList();
+      loadActiveTask();
+    }
+
+    function selectModule(modId) {
+      currentModuleId = modId;
+      document.querySelectorAll('.mod-tab-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`modBtn-${modId}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const mod = workoutCatalog.find(m => m.id === modId);
+      if (mod && mod.tasks.length > 0) {
+        currentTaskId = mod.tasks[0].id;
+      }
+
+      renderTasksList();
+      loadActiveTask();
+    }
+
+    function renderTasksList() {
+      const mod = workoutCatalog.find(m => m.id === currentModuleId);
+      if (!mod) return;
+
+      document.getElementById('sidebarTasksTitle').textContent = `${mod.name} (10 завдань)`;
+      const list = document.getElementById('tasksNavList');
+      list.innerHTML = '';
+
+      mod.tasks.forEach(t => {
+        const btn = document.createElement('button');
+        btn.className = `task-select-btn ${t.id === currentTaskId ? 'active' : ''}`;
+        btn.id = `taskBtn-${t.id.replace('.', '-')}`;
+        btn.onclick = () => selectTask(t.id);
+
+        const status = getTaskStatus(t.id);
+        const icon = status === 'pass' ? '🟢' : status === 'fail' ? '🔴' : '⚪';
+
+        btn.innerHTML = `
+          <span>#${t.id} ${t.name}</span>
+          <span class="task-status-dot" id="dot-${t.id.replace('.', '-')}">${icon}</span>
+        `;
+        list.appendChild(btn);
+      });
+    }
+
+    function selectTask(taskId) {
+      currentTaskId = taskId;
+      document.querySelectorAll('.task-select-btn').forEach(b => b.classList.remove('active'));
+      const btn = document.getElementById(`taskBtn-${taskId.replace('.', '-')}`);
+      if (btn) btn.classList.add('active');
+
+      loadActiveTask();
+    }
+
+    function getTaskStatus(taskId) {
+      return localStorage.getItem(`js_workout_status_${taskId}`) || 'idle';
+    }
+
+    function getModulePassCount(mod) {
+      let count = 0;
+      mod.tasks.forEach(t => {
+        if (getTaskStatus(t.id) === 'pass') count++;
+      });
+      return count;
+    }
+
+    function updateModuleCounter(modId) {
+      const mod = workoutCatalog.find(m => m.id === modId);
+      if (!mod) return;
+      const count = getModulePassCount(mod);
+      const el = document.getElementById(`modCounter-${modId}`);
+      if (el) el.textContent = `${count}/${mod.tasks.length}`;
+    }
+
+    // Load active task into editor and view
+    function loadActiveTask() {
+      const mod = workoutCatalog.find(m => m.id === currentModuleId);
+      if (!mod) return;
+      const task = mod.tasks.find(t => t.id === currentTaskId);
+      if (!task) return;
+
+      // Update Header
+      document.getElementById('taskTitle').textContent = `Завдання ${task.id}: ${task.title}`;
+      document.getElementById('taskModuleLabel').textContent = `${mod.name} • ${task.name}()`;
+
+      const levelBadge = document.getElementById('taskLevelBadge');
+      levelBadge.textContent = task.level;
+      levelBadge.className = 'level-tag';
+      if (task.level.includes('Легкий')) levelBadge.classList.add('easy');
+      else if (task.level.includes('Важкий')) levelBadge.classList.add('hard');
+
+      // Update Description & Requirements
+      const descBox = document.getElementById('taskDescriptionBox');
+      descBox.innerHTML = `
+        <div><strong>🎯 Суть завдання:</strong><br>${task.goal}</div>
+        <div style="margin-top: 6px;"><strong>📋 Вимоги до функції:</strong>
+          <ul>
+            ${task.requirements.map(r => `<li>${r}</li>`).join('')}
+          </ul>
+        </div>
+        <div style="margin-top: 6px;"><strong>💡 Приклади:</strong>
+          <pre style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; font-family: var(--font-mono); font-size: 11px; margin-top: 4px; overflow-x: auto;">${task.examples}</pre>
+        </div>
+      `;
+
+      // Update Theory Hint
+      const hintText = document.getElementById('taskTheoryHintText');
+      hintText.innerHTML = task.theoryHint || 'Зверніть увагу на відповідність типу поверненого значення та валідацію вхідних даних.';
+
+      // Update Editor
+      document.getElementById('editorFileName').textContent = mod.file;
+      const savedCode = localStorage.getItem(`js_workout_code_${task.id}`);
+      const editor = document.getElementById('codeEditor');
+      editor.value = savedCode !== null ? savedCode : task.starterCode;
+
+      // Reset test output state
+      document.getElementById('testCasesResultsList').innerHTML = `
+        <div style="font-size: 12px; color: var(--text-muted); padding: 8px;">
+          Натисніть "▶️ Перевірити моє рішення" або комбінацію клавіш Ctrl + Enter для перевірки розв'язку.
+        </div>
+      `;
+      document.getElementById('resultsSummaryBadge').className = 'results-summary-badge badge-idle';
+      document.getElementById('resultsSummaryBadge').textContent = 'Очікує запуску';
+      document.getElementById('virtualConsoleBox').textContent = 'Консоль чиста.';
+    }
+
+    // Auto-save on editor input + Tab indentation handling
+    const editor = document.getElementById('codeEditor');
+    editor.addEventListener('input', () => {
+      localStorage.setItem(`js_workout_code_${currentTaskId}`, editor.value);
+      showSaveIndicator();
+    });
+
+    editor.addEventListener('keydown', (e) => {
+      // Ctrl+Enter or Cmd+Enter to run test
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        runActiveTaskTest();
+        return;
+      }
+
+      // Tab key indent
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        editor.value = editor.value.substring(0, start) + '  ' + editor.value.substring(end);
+        editor.selectionStart = editor.selectionEnd = start + 2;
+        localStorage.setItem(`js_workout_code_${currentTaskId}`, editor.value);
+        showSaveIndicator();
+      }
+    });
+
+    function showSaveIndicator() {
+      const ind = document.getElementById('saveIndicator');
+      ind.style.display = 'inline';
+      setTimeout(() => { ind.style.display = 'none'; }, 1500);
+    }
+
+    window.resetActiveTaskCode = () => {
+      if (!confirm('Ви дійсно хочете скинути код цього завдання до початкового шаблону?')) return;
+      const mod = workoutCatalog.find(m => m.id === currentModuleId);
+      const task = mod?.tasks.find(t => t.id === currentTaskId);
+      if (!task) return;
+
+      localStorage.removeItem(`js_workout_code_${task.id}`);
+      editor.value = task.starterCode;
+      showSaveIndicator();
+      document.getElementById('testCasesResultsList').innerHTML = '<div style="color: var(--text-muted); padding: 8px; font-size: 12px;">Код скинуто до шаблону.</div>';
+    };
+
+    window.copyActiveCodeToClipboard = () => {
+      navigator.clipboard.writeText(editor.value).then(() => {
+        alert('✅ Код успішно скопійовано в буфер обміну! Тепер ви можете вставити його у відповідний файл у src/');
+      });
+    };
+
+    // Execute Active Task Test
+    window.runActiveTaskTest = () => {
+      const mod = workoutCatalog.find(m => m.id === currentModuleId);
+      const task = mod?.tasks.find(t => t.id === currentTaskId);
+      if (!task) return;
+
+      const userCode = editor.value;
+      const consoleBox = document.getElementById('virtualConsoleBox');
+      const resultsContainer = document.getElementById('testCasesResultsList');
+      const summaryBadge = document.getElementById('resultsSummaryBadge');
+
+      const logs = [];
+      const origLog = console.log;
+      console.log = (...args) => {
+        logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' '));
+        origLog(...args);
+      };
+
+      try {
+        // Compile student function
+        const cleanCode = userCode
+          .replace(/export\s+function/g, 'function')
+          .replace(/export\s+const/g, 'const');
+
+        const factory = new Function(`
+          ${cleanCode}
+          if (typeof ${task.name} === 'function') return ${task.name};
+          throw new Error('Функція "${task.name}" не знайдена у вашому коді!');
+        `);
+
+        const fn = factory();
+
+        // Run cases
+        let passedCount = 0;
+        const caseOutputs = [];
+
+        task.cases.forEach((c, idx) => {
+          try {
+            const actual = c.run(fn);
+            const passed = c.verify ? c.verify(actual) : deepEqual(actual, c.expected);
+            if (passed) passedCount++;
+
+            caseOutputs.push(`
+              <div class="case-item ${passed ? 'case-pass' : 'case-fail'}">
+                <div class="case-row-top">
+                  <span class="case-label">${c.label}</span>
+                  <span>${passed ? '🟢 PASS' : '🔴 FAIL'}</span>
+                </div>
+                <div class="case-diff">
+                  <span>Вхідні дані: <code>${c.inputLabel}</code></span>
+                  <span class="diff-expected">Очікувалось: ${c.expectedStr || JSON.stringify(c.expected)}</span>
+                  <span class="${passed ? 'diff-expected' : 'diff-actual'}">Отримано: ${JSON.stringify(actual)}</span>
+                </div>
+              </div>
+            `);
+          } catch (caseErr) {
+            caseOutputs.push(`
+              <div class="case-item case-fail">
+                <div class="case-row-top">
+                  <span class="case-label">${c.label}</span>
+                  <span>🔴 RUNTIME ERROR</span>
+                </div>
+                <div style="color: #f87171; font-size: 11px; margin-top: 2px;">
+                  Помилка при виконанні: ${caseErr.message}
+                </div>
+              </div>
+            `);
+          }
+        });
+
+        const isAllPassed = passedCount === task.cases.length;
+        resultsContainer.innerHTML = caseOutputs.join('');
+
+        if (isAllPassed) {
+          summaryBadge.className = 'results-summary-badge badge-pass';
+          summaryBadge.textContent = `✓ Успішно! (${passedCount}/${task.cases.length} тестів пройдено)`;
+          localStorage.setItem(`js_workout_status_${task.id}`, 'pass');
+        } else {
+          summaryBadge.className = 'results-summary-badge badge-fail';
+          summaryBadge.textContent = `✕ Помилка: ${passedCount}/${task.cases.length} тестів пройдено`;
+          localStorage.setItem(`js_workout_status_${task.id}`, 'fail');
+        }
+
+        // Update dot
+        const dot = document.getElementById(`dot-${task.id.replace('.', '-')}`);
+        if (dot) dot.textContent = isAllPassed ? '🟢' : '🔴';
+        updateModuleCounter(currentModuleId);
+
+      } catch (compileErr) {
+        summaryBadge.className = 'results-summary-badge badge-fail';
+        summaryBadge.textContent = '✕ Синтаксична помилка в коді';
+        resultsContainer.innerHTML = `
+          <div class="case-item case-fail">
+            <strong>❌ Помилка в коді функції:</strong>
+            <pre style="color: #fca5a5; font-size: 11px; margin-top: 4px; white-space: pre-wrap;">${compileErr.message}</pre>
+          </div>
+        `;
+        localStorage.setItem(`js_workout_status_${task.id}`, 'fail');
+        const dot = document.getElementById(`dot-${task.id.replace('.', '-')}`);
+        if (dot) dot.textContent = '🔴';
+      } finally {
+        console.log = origLog;
+        consoleBox.textContent = logs.length > 0 ? logs.join('\n') : 'Консоль чиста (команда console.log не викликалась).';
+      }
+    };
+
+    // Full Suite Mass Runner
+    window.runMassSuiteRunner = () => {
+      const log = document.getElementById('massTerminalLog');
+      log.textContent = '🚀 Запуск повної перевірки всіх 60 завдань на основі коду...\n\n';
+
+      let totalPassed = 0;
+      const totalTasks = 60;
+
+      workoutCatalog.forEach(mod => {
+        let modPassed = 0;
+        log.textContent += `=====================================================\n📁 ${mod.name} (${mod.file})\n=====================================================\n`;
+
+        mod.tasks.forEach(task => {
+          const userCode = localStorage.getItem(`js_workout_code_${task.id}`);
+          let fn = null;
+
+          try {
+            if (userCode && userCode.trim()) {
+              const cleanCode = userCode.replace(/export\s+function/g, 'function').replace(/export\s+const/g, 'const');
+              const factory = new Function(`${cleanCode}; return ${task.name};`);
+              fn = factory();
+            } else {
+              fn = task.fallbackFn;
+            }
+
+            let allCasesOk = true;
+            for (const c of task.cases) {
+              const actual = c.run(fn);
+              const passed = c.verify ? c.verify(actual) : deepEqual(actual, c.expected);
+              if (!passed) { allCasesOk = false; break; }
+            }
+
+            if (allCasesOk) {
+              modPassed++;
+              totalPassed++;
+              localStorage.setItem(`js_workout_status_${task.id}`, 'pass');
+              log.textContent += `  ✓ Завдання ${task.id} [${task.name}]: ПРОЙДЕНО\n`;
+            } else {
+              localStorage.setItem(`js_workout_status_${task.id}`, 'fail');
+              log.textContent += `  ✕ Завдання ${task.id} [${task.name}]: НЕ ПРОЙДЕНО\n`;
+            }
+          } catch (err) {
+            localStorage.setItem(`js_workout_status_${task.id}`, 'fail');
+            log.textContent += `  ✕ Завдання ${task.id} [${task.name}]: ПОМИЛКА -> ${err.message}\n`;
+          }
+        });
+
+        updateModuleCounter(mod.id);
+        log.textContent += `Підсумок модуля: ${modPassed} / 10 завдань успішно.\n\n`;
+      });
+
+      const percent = Math.round((totalPassed / totalTasks) * 100);
+      document.getElementById('massProgressBar').style.width = `${percent}%`;
+      document.getElementById('massProgressSummary').textContent = `Прогрес: ${totalPassed} / ${totalTasks} завдань вирішено (${percent}%)`;
+      document.getElementById('massProgressRate').textContent = percent === 100 ? '🎉 Всі 100% виконано!' : `Залишилось: ${totalTasks - totalPassed}`;
+
+      log.textContent += `-----------------------------------------------------\n📊 ПІДСУМОК:\nУспішно пройдено: ${totalPassed} з ${totalTasks} завдань (${percent}%)\n-----------------------------------------------------\n`;
+      renderTasksList();
+    };
+
+    // Initialize UI on load
+    initTrainerUI();
+  </script>
+</body>
+</html>

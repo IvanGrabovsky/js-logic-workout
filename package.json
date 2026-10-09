@@ -1,0 +1,16 @@
+{
+  "name": "js-logic-workout",
+  "version": "1.0.0",
+  "description": "Практичний воркаут з JavaScript: alert/prompt, змінні, приведення типів, порівняння та оператори",
+  "type": "module",
+  "scripts": {
+    "start": "vite --open",
+    "dev": "vite --open",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0",
+    "vitest": "^1.6.0"
+  }
+}
