@@ -27,8 +27,8 @@ export const workoutCatalog = [
           'Якщо введено текст ("abc"), дробове число або від\'ємне — повернути null.'
         ],
         examples: 'parseAgeFromPrompt("16") => 16\nparseAgeFromPrompt("  17  ") => 17\nparseAgeFromPrompt(null) => null\nparseAgeFromPrompt("abc") => null',
-        theoryHint: '💡 <b>Парсинг чисел:</b> <code>Number(str.trim())</code> перетворює очищений рядок на число. Перевірити, чи число ціле: <code>Number.isInteger(num)</code>.',
-        starterCode: `export function parseAgeFromPrompt(input) {\n  if (input === null || typeof input !== 'string') return null;\n  const trimmed = input.trim();\n  if (trimmed === '') return null;\n  const num = Number(trimmed);\n  if (Number.isNaN(num) || !Number.isInteger(num) || num < 0) return null;\n  return num;\n}`,
+        theoryHint: '💡 <b>Парсинг чисел:</b> Для перетворення очищеного рядка на число використайте функцію <code>Number()</code> та метод <code>.trim()</code>. Перевірити, чи число є цілим: <code>Number.isInteger()</code>.',
+        starterCode: `export function parseAgeFromPrompt(input) {\n  // TODO: Напиши свій розв'язок\n  return null;\n}`,
         fallbackFn: m1.parseAgeFromPrompt,
         cases: [
           { label: 'Звичайний числовий рядок "16"', inputLabel: '"16"', expected: 16, run: fn => fn('16') },
@@ -51,8 +51,8 @@ export const workoutCatalog = [
           'Якщо довжина перевищує 15 символів — обрізати рівно до 15.'
         ],
         examples: 'cleanUserNickname("  Neo  ") => "Neo"\ncleanUserNickname("   ") => "Anonymous"\ncleanUserNickname("CyberWarrior2077ExtraLong") => "CyberWarrior207"',
-        theoryHint: '💡 <b>Метод .slice():</b> <code>str.slice(0, 15)</code> повертає перші 15 символів рядка. Метод <code>str.trim()</code> видаляє пробіли по краях.',
-        starterCode: `export function cleanUserNickname(rawInput) {\n  if (rawInput === null || typeof rawInput !== 'string') return 'Anonymous';\n  const trimmed = rawInput.trim();\n  if (trimmed === '') return 'Anonymous';\n  return trimmed.slice(0, 15);\n}`,
+        theoryHint: '💡 <b>Обрізка рядка:</b> Для отримання потрібної кількості початкових символів підійде метод <code>.slice(початок, кінець)</code>, а для видалення пробілів по краях — <code>.trim()</code>.',
+        starterCode: `export function cleanUserNickname(rawInput) {\n  // TODO: Напиши свій розв'язок\n  return '';\n}`,
         fallbackFn: m1.cleanUserNickname,
         cases: [
           { label: 'Очищення пробілів "  Neo  "', inputLabel: '"  Neo  "', expected: 'Neo', run: fn => fn('  Neo  ') },
@@ -73,8 +73,8 @@ export const workoutCatalog = [
           'Інакше повернути їх математичну суму (number).'
         ],
         examples: 'safeSumPrompt("10", "20") => 30\nsafeSumPrompt(" 15.5 ", " 4.5 ") => 20\nsafeSumPrompt(null, "10") => "Помилка: введення скасовано"',
-        theoryHint: '💡 <b>Перевірка чисел:</b> <code>Number.isFinite(num)</code> перевіряє, що значення є дійсним числом (не NaN і не Infinity).',
-        starterCode: `export function safeSumPrompt(promptA, promptB) {\n  if (promptA === null || promptB === null) return 'Помилка: введення скасовано';\n  const trimA = String(promptA).trim();\n  const trimB = String(promptB).trim();\n  if (trimA === '' || trimB === '') return 'Помилка: введення скасовано';\n  const numA = Number(trimA);\n  const numB = Number(trimB);\n  if (!Number.isFinite(numA) || !Number.isFinite(numB)) return 'Помилка: невірне число';\n  return numA + numB;\n}`,
+        theoryHint: '💡 <b>Перевірка чисел:</b> Функція <code>Number.isFinite()</code> перевіряє, що значення є дійсним скінченним числом (відсіює NaN та Infinity).',
+        starterCode: `export function safeSumPrompt(promptA, promptB) {\n  // TODO: Напиши свій розв'язок\n  return 0;\n}`,
         fallbackFn: m1.safeSumPrompt,
         cases: [
           { label: 'Сума цілих чисел "10" + "20"', inputLabel: '"10", "20"', expected: 30, run: fn => fn('10', '20') },
@@ -117,7 +117,7 @@ export const workoutCatalog = [
           'Якщо хоча б одне правило порушено — повернути null.'
         ],
         examples: 'normalizeEmail("  Ivan@Gmail.Com  ") => "ivan@gmail.com"\nnormalizeEmail("invalid-email") => null',
-        theoryHint: '💡 <b>Методи рядків:</b> <code>str.indexOf("@")</code> повертає позицію символу в рядку (або -1, якщо символу немає).',
+        theoryHint: '💡 <b>Пошук у рядку:</b> Для перевірки наявності символу в тексті використовуйте метод <code>.indexOf()</code> або <code>.includes()</code>.',
         starterCode: `export function normalizeEmail(rawEmail) {\n  // TODO: Напиши свій розв'язок\n  return null;\n}`,
         fallbackFn: m1.normalizeEmail,
         cases: [
@@ -140,7 +140,7 @@ export const workoutCatalog = [
           'В інших випадках повернути defaultState.'
         ],
         examples: 'parseBooleanConfirm("  ТАК  ") => true\nparseBooleanConfirm("no") => false\nparseBooleanConfirm("хз", true) => true',
-        theoryHint: '💡 <b>Регістронезалежність:</b> Очистіть рядок через <code>.trim().toLowerCase()</code> перед порівнянням.',
+        theoryHint: '💡 <b>Регістронезалежність:</b> Зведіть вхідний рядок до єдиного регістру за допомогою <code>.toLowerCase()</code> та видаліть зайві пробіли перед порівнянням.',
         starterCode: `export function parseBooleanConfirm(input, defaultState = false) {\n  // TODO: Напиши свій розв'язок\n  return false;\n}`,
         fallbackFn: m1.parseBooleanConfirm,
         cases: [
@@ -163,7 +163,7 @@ export const workoutCatalog = [
           'Інакше повернути 2 * (a + b).'
         ],
         examples: 'calculateRectanglePerimeter("5", "10") => 30\ncalculateRectanglePerimeter("-5", "10") => null',
-        theoryHint: '💡 <b>Периметр:</b> Формула: <code>2 * (width + height)</code>. Не забудьте перевірити, що обидва числа > 0.',
+        theoryHint: '💡 <b>Периметр прямокутника:</b> Згадайте формулу подвоєної суми сторін та перевірте валідність вхідних чисел (мають бути додатними).',
         starterCode: `export function calculateRectanglePerimeter(rawWidth, rawHeight) {\n  // TODO: Напиши свій розв'язок\n  return null;\n}`,
         fallbackFn: m1.calculateRectanglePerimeter,
         cases: [
@@ -185,7 +185,7 @@ export const workoutCatalog = [
           'Якщо вхід некоректний — повернути порожній рядок "".'
         ],
         examples: 'sanitizeSearchQuery("  js   react   css  ") => "js react css"',
-        theoryHint: '💡 <b>Стиснення пробілів:</b> <code>query.replace(/\\s+/g, " ")</code> замінює довільну кількість пробілів на один.',
+        theoryHint: '💡 <b>Стиснення пробілів:</b> Для заміни повторюваних пробілів на один можна використати метод <code>.replace()</code> з регулярним виразом або розбиття рядка.',
         starterCode: `export function sanitizeSearchQuery(query) {\n  // TODO: Напиши свій розв'язок\n  return '';\n}`,
         fallbackFn: m1.sanitizeSearchQuery,
         cases: [
@@ -205,7 +205,7 @@ export const workoutCatalog = [
           'Якщо введено порожній рядок — повернути "".'
         ],
         examples: 'extractInitials("  тарас   шевченко  ") => "Т. Ш."\nextractInitials("платон") => "П."',
-        theoryHint: '💡 <b>Робота зі словами:</b> <code>str.split(" ").filter(Boolean)</code> розбиває рядок на непорожні слова.',
+        theoryHint: '💡 <b>Робота зі словами:</b> Метод <code>.split(" ")</code> розбиває рядок на елементи масиву, які потім можна відфільтрувати від порожніх рядків.',
         starterCode: `export function extractInitials(rawFullName) {\n  // TODO: Напиши свій розв'язок\n  return '';\n}`,
         fallbackFn: m1.extractInitials,
         cases: [
@@ -226,7 +226,7 @@ export const workoutCatalog = [
           'Інакше повернути розпарсене число.'
         ],
         examples: 'smartNumberPromptParser("42", 0, 1, 100) => 42\nsmartNumberPromptParser("150", 10, 1, 100) => 10',
-        theoryHint: '💡 <b>Перевірка меж:</b> Якщо <code>num < min || num > max</code>, значення вважається поза лімітом.',
+        theoryHint: '💡 <b>Перевірка діапазону:</b> Перевірте вихід числа за допустимі межі за допомогою операторів порівняння <code><</code> та <code>></code>.',
         starterCode: `export function smartNumberPromptParser(input, fallback, min = -Infinity, max = Infinity) {\n  // TODO: Напиши свій розв'язок\n  return fallback;\n}`,
         fallbackFn: m1.smartNumberPromptParser,
         cases: [
@@ -259,7 +259,7 @@ export const workoutCatalog = [
           'stringRepresentation: значення, приведене до рядка (String).'
         ],
         examples: 'inspectBoolean("0") => { isTruthy: true, originalType: "string", stringRepresentation: "0" }\ninspectBoolean(0) => { isTruthy: false, originalType: "number", stringRepresentation: "0" }',
-        theoryHint: '💡 <b>Обʼєкт як результат:</b> Щоб повернути кілька полів, використовуйте синтаксис: <code>return { isTruthy: Boolean(value), originalType: typeof value, stringRepresentation: String(value) };</code>',
+        theoryHint: '💡 <b>Обʼєкт як результат:</b> Сформуйте обʼєкт із трьома властивостями: для істинності використайте явне приведення за допомогою <code>Boolean()</code>, підставивши в дужки потрібне значення, для типу — оператор <code>typeof</code>, а для рядкового представлення — <code>String()</code>.',
         starterCode: `export function inspectBoolean(value) {\n  // TODO: Напиши свій розв'язок\n  return { isTruthy: false, originalType: '', stringRepresentation: '' };\n}`,
         fallbackFn: m2.inspectBoolean,
         cases: [
@@ -280,7 +280,7 @@ export const workoutCatalog = [
           'Для будь-яких інших значень (false, null, undefined, "", []) повернути false.'
         ],
         examples: 'isRealZeroOrZeroString(0) => true\nisRealZeroOrZeroString("  0  ") => true\nisRealZeroOrZeroString(false) => false',
-        theoryHint: '💡 <b>Строге порівняння:</b> Уникайте <code>val == 0</code>, бо Number(false) також дасть 0! Перевіряйте тип: <code>typeof val === "string"</code>.',
+        theoryHint: '💡 <b>Строге порівняння:</b> Уникайте нестрогого оператора <code>==</code>, адже різні типи можуть давати хибну рівність. Перевіряйте типи окремо через <code>typeof</code>.',
         starterCode: `export function isRealZeroOrZeroString(val) {\n  // TODO: Напиши свій розв'язок\n  return false;\n}`,
         fallbackFn: m2.isRealZeroOrZeroString,
         cases: [
@@ -302,7 +302,7 @@ export const workoutCatalog = [
           'Повернути новий масив, не змінюючи оригінальний.'
         ],
         examples: 'cleanFalsyList([0, "0", "", false, true]) => ["0", true]',
-        theoryHint: '💡 <b>Масиви:</b> <code>Array.isArray(items)</code> перевіряє тип масиву. Метод <code>items.filter(Boolean)</code> автоматично відсіює всі 6 falsy значень.',
+        theoryHint: '💡 <b>Фільтрація масиву:</b> Перевірте валідність масиву через <code>Array.isArray()</code> та скористайтеся методом фільтрації масиву з логічною перевіркою.',
         starterCode: `export function cleanFalsyList(items) {\n  // TODO: Напиши свій розв'язок\n  return [];\n}`,
         fallbackFn: m2.cleanFalsyList,
         cases: [
@@ -322,7 +322,7 @@ export const workoutCatalog = [
           'Якщо вхід некоректний — повернути NaN.'
         ],
         examples: 'parseCurrency(" 1200 грн ") => 1200\nparseCurrency("$400,75") => 400.75\nparseCurrency("-50 грн") => NaN',
-        theoryHint: '💡 <b>Заміна коми:</b> <code>str.replace(",", ".")</code> замінює кому на крапку для коректного розпізнавання дробу.',
+        theoryHint: '💡 <b>Дробові числа:</b> У JavaScript десяткова частина відокремлюється крапкою, тому кому в тексті слід замінити на крапку через метод <code>.replace()</code> перед парсингом.',
         starterCode: `export function parseCurrency(input) {\n  // TODO: Напиши свій розв'язок\n  return NaN;\n}`,
         fallbackFn: m2.parseCurrency,
         cases: [
@@ -344,7 +344,7 @@ export const workoutCatalog = [
           'isDangerous: true, якщо хоча б один аргумент null/undefined, або boolean при арифметиці крім "+", або результат NaN.'
         ],
         examples: 'evalImplicitCoercion("10", "2", "-") => { result: 8, isCoerced: true, isDangerous: false }\nevalImplicitCoercion(null, 5, "+") => { result: 5, isCoerced: true, isDangerous: true }',
-        theoryHint: '💡 <b>Небезпека null:</b> Операція <code>null + 5</code> неявно перетворює null на 0, що є небезпечним для коду.',
+        theoryHint: '💡 <b>Небезпека неявного приведення:</b> Операції на кшталт <code>null + 5</code> неявно перетворюють null на 0. Будьте уважні до несподіваних змін типів.',
         starterCode: `export function evalImplicitCoercion(a, b, operator) {\n  // TODO: Напиши свій розв'язок\n  return { result: null, resultType: '', isCoerced: false, isDangerous: false };\n}`,
         fallbackFn: m2.evalImplicitCoercion,
         cases: [
@@ -364,7 +364,7 @@ export const workoutCatalog = [
           'Рядок із пробілами всередині або текстом має давати NaN.'
         ],
         examples: 'strictToNumber("42") => 42\nstrictToNumber("-15.5") => -15.5\nstrictToNumber(false) => NaN\nstrictToNumber(null) => NaN',
-        theoryHint: '💡 <b>Чому не просто Number():</b> Звичайний <code>Number(null)</code> повертає 0! Тому спочатку перевірте, чи значення є рядком.',
+        theoryHint: '💡 <b>Строге приведення:</b> Звичайний виклик <code>Number(null)</code> повертає 0 замість помилки, тому спершу перевірте дійсний тип значення.',
         starterCode: `export function strictToNumber(val) {\n  // TODO: Напиши свій розв'язок\n  return NaN;\n}`,
         fallbackFn: m2.strictToNumber,
         cases: [
@@ -387,7 +387,7 @@ export const workoutCatalog = [
           'asBoolean: Boolean(val)'
         ],
         examples: 'coerceToPrimitivesSummary("123") => { asString: "123", asNumber: 123, asBoolean: true }',
-        theoryHint: '💡 <b>Приведення типів:</b> Використовуйте функції-конструктори <code>String(x)</code>, <code>Number(x)</code>, <code>Boolean(x)</code>.',
+        theoryHint: '💡 <b>Приведення типів:</b> Застосуйте відповідні функції явного перетворення <code>String()</code>, <code>Number()</code> та <code>Boolean()</code>, передавши в них вхідний аргумент.',
         starterCode: `export function coerceToPrimitivesSummary(val) {\n  // TODO: Напиши свій розв'язок\n  return { asString: '', asNumber: 0, asBoolean: false };\n}`,
         fallbackFn: m2.coerceToPrimitivesSummary,
         cases: [
@@ -407,7 +407,7 @@ export const workoutCatalog = [
           'Якщо умови порушені — повернути null, інакше повернути результат.'
         ],
         examples: 'safeDivision("10", "2") => 5\nsafeDivision(10, 0) => null\nsafeDivision("abc", 2) => null',
-        theoryHint: '💡 <b>Ділення на нуль:</b> У JS <code>10 / 0</code> дає <code>Infinity</code>! Щоб цього уникнути, перевіряйте <code>den !== 0</code>.',
+        theoryHint: '💡 <b>Ділення на нуль:</b> Памʼятайте, що ділення на нуль у JS повертає <code>Infinity</code>, тому знаменник слід окремо перевірити на нерівність нулю.',
         starterCode: `export function safeDivision(numerator, denominator) {\n  // TODO: Напиши свій розв'язок\n  return null;\n}`,
         fallbackFn: m2.safeDivision,
         cases: [
@@ -449,7 +449,7 @@ export const workoutCatalog = [
           'risk: "LOW_RISK" — якщо не рівні навіть за ==.'
         ],
         examples: 'compareTypeCoercionRisk(42, 42) => { risk: "NONE" }\ncompareTypeCoercionRisk("0", 0) => { risk: "HIGH_RISK" }\ncompareTypeCoercionRisk("cat", 5) => { risk: "LOW_RISK" }',
-        theoryHint: '💡 <b>Ризик == :</b> Вираз <code>"0" == 0</code> повертає true, хоча типи різні! Це класична пастка нестрогого порівняння.',
+        theoryHint: '💡 <b>Ризик оператора ==:</b> Нестроге порівняння приводить різні типи до спільного, тому завжди аналізуйте, чи співпадають типи значень.',
         starterCode: `export function compareTypeCoercionRisk(val1, val2) {\n  // TODO: Напиши свій розв'язок\n  return { risk: 'LOW_RISK', reason: '' };\n}`,
         fallbackFn: m2.compareTypeCoercionRisk,
         cases: [
@@ -503,7 +503,7 @@ export const workoutCatalog = [
           'inclusive = true включає межі, false — виключає.'
         ],
         examples: 'isValueInRange(15, 10, 20) => true\nisValueInRange(15, 20, 10) => true\nisValueInRange(10, 10, 20, false) => false',
-        theoryHint: '💡 <b>Обмін змінних:</b> <code>if (min > max) [min, max] = [max, min];</code> міняє значення двох змінних місцями.',
+        theoryHint: '💡 <b>Впорядкування меж:</b> Якщо початкова межа виявилася більшою за кінцеву, поміняйте їх місцями перед перевіркою потрапляння числа в діапазон.',
         starterCode: `export function isValueInRange(val, min, max, inclusive = true) {\n  // TODO: Напиши свій розв'язок\n  return false;\n}`,
         fallbackFn: m3.isValueInRange,
         cases: [
@@ -525,7 +525,7 @@ export const workoutCatalog = [
           'Повернути null при невалідному форматі.'
         ],
         examples: 'compareSemanticVersions("1.10.0", "1.2.0") => 1\ncompareSemanticVersions("1.2.0", "1.10.0") => -1\ncompareSemanticVersions("1.5", "1.5.0") => 0',
-        theoryHint: '💡 <b>Розбиття на частини:</b> <code>v.split(".")</code> повертає масив компонентів версії у вигляді рядків.',
+        theoryHint: '💡 <b>Складові версії:</b> Розбийте рядок версії на окремі числові сегменти за допомогою розділювача крапки та методу <code>.split()</code>.',
         starterCode: `export function compareSemanticVersions(v1, v2) {\n  // TODO: Напиши свій розв'язок\n  return null;\n}`,
         fallbackFn: m3.compareSemanticVersions,
         cases: [
@@ -588,7 +588,7 @@ export const workoutCatalog = [
           'Інакше повернути val.'
         ],
         examples: 'findClampValue(5, 10, 20) => 10\nfindClampValue(25, 10, 20) => 20\nfindClampValue(15, 10, 20) => 15',
-        theoryHint: '💡 <b>Math.min та Math.max:</b> Лаконічний запис clamp: <code>Math.min(Math.max(val, min), max)</code>.',
+        theoryHint: '💡 <b>Обмеження значення (clamp):</b> Використовуйте комбінацію умов або методи <code>Math.min()</code> та <code>Math.max()</code>, щоб утримати число в заданих межах.',
         starterCode: `export function findClampValue(val, min, max) {\n  // TODO: Напиши свій розв'язок\n  return NaN;\n}`,
         fallbackFn: m3.findClampValue,
         cases: [
@@ -609,7 +609,7 @@ export const workoutCatalog = [
           'true, лише якщо всі значення строго рівні ===.'
         ],
         examples: 'areAllEqualStrict(5, 5, 5) => true\nareAllEqualStrict(5, 5, "5") => false',
-        theoryHint: '💡 <b>Rest-параметри:</b> <code>...args</code> збирає аргументи у масив. Метод <code>args.every(x => x === args[0])</code> перевіряє рівність.',
+        theoryHint: '💡 <b>Довільна кількість аргументів:</b> Зберіть передані параметри за допомогою rest-синтаксису <code>(...args)</code> та перевірте, чи всі елементи строго рівні першому.',
         starterCode: `export function areAllEqualStrict(...args) {\n  // TODO: Напиши свій розв'язок\n  return false;\n}`,
         fallbackFn: m3.areAllEqualStrict,
         cases: [
@@ -629,7 +629,7 @@ export const workoutCatalog = [
           'Кожне значення відповідного ключа має бути строго рівним ===.'
         ],
         examples: 'compareObjectsShallow({ a: 1 }, { a: 1 }) => true\ncompareObjectsShallow({ a: 1 }, { a: "1" }) => false',
-        theoryHint: '💡 <b>Ключі обʼєкта:</b> <code>Object.keys(obj)</code> повертає масив назв усіх властивостей обʼєкта.',
+        theoryHint: '💡 <b>Властивості обʼєкта:</b> Отримати список усіх ключів для порівняння кількості та значень допоможе метод <code>Object.keys()</code>.',
         starterCode: `export function compareObjectsShallow(objA, objB) {\n  // TODO: Напиши свій розв'язок\n  return false;\n}`,
         fallbackFn: m3.compareObjectsShallow,
         cases: [
@@ -649,7 +649,7 @@ export const workoutCatalog = [
           'Повернути новий масив рядків.'
         ],
         examples: 'sortStringNumbers(["10", "2", "1", "25"]) => ["1", "2", "10", "25"]',
-        theoryHint: '💡 <b>Компаparator для sort:</b> <code>[...arr].sort((a, b) => Number(a) - Number(b))</code> сортує числа за зростанням.',
+        theoryHint: '💡 <b>Числове сортування:</b> Зверніть увагу, що метод <code>.sort()</code> за замовчуванням сортує як рядки, тому для чисел йому потрібна функція порівняння.',
         starterCode: `export function sortStringNumbers(strNumbers) {\n  // TODO: Напиши свій розв'язок\n  return [];\n}`,
         fallbackFn: m3.sortStringNumbers,
         cases: [
@@ -669,7 +669,7 @@ export const workoutCatalog = [
           'Містить щонайменше одну цифру [0-9].'
         ],
         examples: 'validatePasswordStrength("Secr3tPass!") => { isValid: true }\nvalidatePasswordStrength("short1A") => { isValid: false }',
-        theoryHint: '💡 <b>Регулярні вирази:</b> <code>/[A-Z]/.test(pwd)</code> перевіряє наявність великої латинської літери.',
+        theoryHint: '💡 <b>Вимоги до пароля:</b> Перевірте довжину та наявність обовʼязкових символів (великі літери, цифри, спецсимволи) за допомогою регулярних виразів або перевірки символів.',
         starterCode: `export function validatePasswordStrength(password, minLen = 8, maxLen = 32) {\n  // TODO: Напиши свій розв'язок\n  return { isValid: false, reason: '' };\n}`,
         fallbackFn: m3.validatePasswordStrength,
         cases: [
@@ -722,7 +722,7 @@ export const workoutCatalog = [
           'dashboard: будь-який зареєстрований не-гість.'
         ],
         examples: 'verifyAccess({ role: "admin", twoFactorEnabled: true }, "admin-panel") => { isGranted: true }',
-        theoryHint: '💡 <b>Перевірка полів обʼєкта:</b> <code>user.role === "admin" && user.twoFactorEnabled</code>.',
+        theoryHint: '💡 <b>Комплексний доступ:</b> Складіть умову доступу, обʼєднавши перевірку ролі користувача та активності двохфакторної автентифікації через оператор <code>&&</code>.',
         starterCode: `export function verifyAccess(user, resource) {\n  // TODO: Напиши свій розв'язок\n  return { isGranted: false, reason: '' };\n}`,
         fallbackFn: m4.verifyAccess,
         cases: [
@@ -759,7 +759,7 @@ export const workoutCatalog = [
           'Ділиться на 4 і не ділиться на 100, АБО ділиться на 400.'
         ],
         examples: 'isLeapYear(2024) => true\nisLeapYear(2000) => true\nisLeapYear(1900) => false',
-        theoryHint: '💡 <b>Залишок від ділення:</b> <code>year % 4 === 0</code> перевіряє, чи ділиться число націло.',
+        theoryHint: '💡 <b>Високосний рік:</b> Використайте оператор залишку від ділення <code>%</code> для перевірки подільності року на 4, 100 та 400.',
         starterCode: `export function isLeapYear(year) {\n  // TODO: Напиши свій розв'язок\n  return false;\n}`,
         fallbackFn: m4.isLeapYear,
         cases: [
@@ -781,7 +781,7 @@ export const workoutCatalog = [
           'insuranceValid === true'
         ],
         examples: 'canDriveCar({ age: 20, hasLicense: true, isIntoxicated: false, insuranceValid: true }) => true',
-        theoryHint: '💡 <b>Заперечення:</b> <code>!driver.isIntoxicated</code> означає, що водій не є пʼяним.',
+        theoryHint: '💡 <b>Логічне заперечення:</b> Оператор <code>!</code> дозволяє інвертувати булеве значення властивості.',
         starterCode: `export function canDriveCar(driver) {\n  // TODO: Напиши свій розв'язок\n  return false;\n}`,
         fallbackFn: m4.canDriveCar,
         cases: [
@@ -799,7 +799,7 @@ export const workoutCatalog = [
           'Якщо val є truthy — повернути його, інакше повернути fallback.'
         ],
         examples: 'defaultIfFalsy("user", "guest") => "user"\ndefaultIfFalsy("", "guest") => "guest"',
-        theoryHint: '💡 <b>Оператор || :</b> <code>return val || fallback;</code> повертає перший truthy операнд.',
+        theoryHint: '💡 <b>Пошук першого значення:</b> Оператор логічного АБО (<code>||</code>) повертає перший truthy операнд серед переданих аргументів.',
         starterCode: `export function defaultIfFalsy(val, fallback) {\n  // TODO: Напиши свій розв'язок\n  return fallback;\n}`,
         fallbackFn: m4.defaultIfFalsy,
         cases: [
@@ -818,7 +818,7 @@ export const workoutCatalog = [
           'false при (true, true) та (false, false).'
         ],
         examples: 'xor(true, false) => true\nxor(true, true) => false',
-        theoryHint: '💡 <b>XOR логіка:</b> Булеві значення різні: <code>Boolean(a) !== Boolean(b)</code>.',
+        theoryHint: '💡 <b>Виключне АБО (XOR):</b> Умова істинна тоді й тільки тоді, коли рівно одне з двох порівнюваних значень є істинним.',
         starterCode: `export function xor(a, b) {\n  // TODO: Напиши свій розв'язок\n  return false;\n}`,
         fallbackFn: m4.xor,
         cases: [
@@ -856,7 +856,7 @@ export const workoutCatalog = [
           'Інакше повернути undefined без помилки.'
         ],
         examples: 'guardFunctionCall(true, x => x * 2, 5) => 10\nguardFunctionCall(false, x => x * 2, 5) => undefined',
-        theoryHint: '💡 <b>Перевірка функції:</b> <code>typeof callback === "function"</code>.',
+        theoryHint: '💡 <b>Безпечний виклик:</b> Перевірте тип колбеку за допомогою оператора <code>typeof</code> перед тим, як його викликати.',
         starterCode: `export function guardFunctionCall(isAllowed, callback, ...args) {\n  // TODO: Напиши свій розв'язок\n  return undefined;\n}`,
         fallbackFn: m4.guardFunctionCall,
         cases: [
@@ -876,7 +876,7 @@ export const workoutCatalog = [
           'DTI <= 50% (або поручитель hasGuarantor при DTI > 50%).'
         ],
         examples: 'complexLoanApproval({ age: 30, creditScore: 700, monthlyIncome: 2000, monthlyDebt: 400 }) => { approved: true }',
-        theoryHint: '💡 <b>Формула DTI:</b> <code>(monthlyDebt / monthlyIncome) * 100</code>.',
+        theoryHint: '💡 <b>Коефіцієнт DTI:</b> Розрахуйте відсоткове співвідношення місячного боргу до місячного доходу та звірте кредитний рейтинг.',
         starterCode: `export function complexLoanApproval(applicant) {\n  // TODO: Напиши свій розв'язок\n  return { approved: false, reason: '' };\n}`,
         fallbackFn: m4.complexLoanApproval,
         cases: [
@@ -907,7 +907,7 @@ export const workoutCatalog = [
           'Звичайні: до 5 км 50 грн, до 15 км 90 грн, далі 180 грн.'
         ],
         examples: 'calculateDeliveryFee(1500, 5, false) => 0\ncalculateDeliveryFee(500, 4, false) => 50',
-        theoryHint: '💡 <b>Вкладений тернарний:</b> <code>dist <= 10 ? 0 : dist <= 25 ? 60 : 120</code>.',
+        theoryHint: '💡 <b>Каскадні умови:</b> Побудуйте ланцюжок тернарних операторів від найменшої відстані до найбільшої.',
         starterCode: `export function calculateDeliveryFee(orderTotal, distanceKm, isPrimeMember) {\n  // TODO: Напиши свій розв'язок\n  return null;\n}`,
         fallbackFn: m5.calculateDeliveryFee,
         cases: [
@@ -928,7 +928,7 @@ export const workoutCatalog = [
           'решта -> "годин"'
         ],
         examples: 'pluralizeHours(1) => "1 година"\npluralizeHours(4) => "4 години"\npluralizeHours(12) => "12 годин"',
-        theoryHint: '💡 <b>Остача від ділення:</b> <code>hours % 100</code> та <code>hours % 10</code>.',
+        theoryHint: '💡 <b>Правила відмінювання:</b> Зверніть увагу на останні цифри числа (десятки та одиниці через залишок <code>%</code>), щоб обрати правильне закінчення слова.',
         starterCode: `export function pluralizeHours(hours) {\n  // TODO: Напиши свій розв'язок\n  return '';\n}`,
         fallbackFn: m5.pluralizeHours,
         cases: [
@@ -1029,7 +1029,7 @@ export const workoutCatalog = [
           'Повернути числове значення відсотка (наприклад 15).'
         ],
         examples: 'getDiscountModifier("vip", 2) => 20\ngetDiscountModifier("regular", 12) => 15',
-        theoryHint: '💡 <b>Тернарний розрахунок:</b> <code>customerType === "vip" ? 20 : ...</code>',
+        theoryHint: '💡 <b>Динамічна знижка:</b> Використайте тернарний оператор для обрання відсотка знижки відповідно до категорії клієнта.',
         starterCode: `export function getDiscountModifier(customerType, orderCount = 0) {\n  // TODO: Напиши свій розв'язок\n  return 0;\n}`,
         fallbackFn: m5.getDiscountModifier,
         cases: [
@@ -1065,7 +1065,7 @@ export const workoutCatalog = [
           'Округлити суму до 2 знаків після коми.'
         ],
         examples: 'calcTaxAmount(10000, false, true) => 500\ncalcTaxAmount(10000, false, false) => 1800',
-        theoryHint: '💡 <b>Округлення грошей:</b> <code>Math.round(tax * 100) / 100</code>.',
+        theoryHint: '💡 <b>Грошовий формат:</b> Для збереження двох знаків після коми округліть розраховану суму до сотих.',
         starterCode: `export function calcTaxAmount(income, isTaxExempt = false, isSingleTax = false) {\n  // TODO: Напиши свій розв'язок\n  return 0;\n}`,
         fallbackFn: m5.calcTaxAmount,
         cases: [
@@ -1117,7 +1117,7 @@ export const workoutCatalog = [
           'Списати суму та повернути обʼєкт транзакції.'
         ],
         examples: 'processAtmWithdrawal(acc, "1234", "1234", "500 грн") => { success: true, withdrawn: 500, banknotes100: 5 }',
-        theoryHint: '💡 <b>Зміна полів:</b> <code>account.balance -= amount; account.dailyLimit -= amount;</code>',
+        theoryHint: '💡 <b>Оновлення балансу:</b> Не забудьте одночасно зменшити як поточний баланс, так і денний залишок ліміту на видану суму.',
         starterCode: `export function processAtmWithdrawal(account, enteredPin, correctPin, requestedAmount) {\n  // TODO: Напиши свій розв'язок\n  return { success: false, code: 'ERROR', message: '' };\n}`,
         fallbackFn: m6.processAtmWithdrawal,
         cases: [
@@ -1139,7 +1139,7 @@ export const workoutCatalog = [
           'Капінг загальної знижки: 40% (або 60% для SUPER50 у vip/teacher).'
         ],
         examples: 'calculateSmartDiscount({ rawPrice: "1000 грн", promoCode: "CAMP20", userRole: "student", itemsCount: 6 }) => finalPrice: 720',
-        theoryHint: '💡 <b>Округлення ціни:</b> <code>Math.round((price * totalPercent) / 100)</code>.',
+        theoryHint: '💡 <b>Розрахунок знижки:</b> Обчисліть сумарний відсоток з урахуванням ліміту і визначте фінальну ціну через округлення.',
         starterCode: `export function calculateSmartDiscount(order) {\n  // TODO: Напиши свій розв'язок\n  return null;\n}`,
         fallbackFn: m6.calculateSmartDiscount,
         cases: [
@@ -1175,7 +1175,7 @@ export const workoutCatalog = [
           'Повернути { isValid: errors.length === 0, errors }.'
         ],
         examples: 'validateRegistrationForm({ ... }) => { isValid: false, errors: ["Пароль менше 6 символів", ...] }',
-        theoryHint: '💡 <b>Список помилок:</b> <code>const errors = []; if (умова) errors.push("Повідомлення");</code>',
+        theoryHint: '💡 <b>Акумуляція помилок:</b> Створіть масив, додавайте туди повідомлення при виявленні кожного порушення та поверніть статус валідності.',
         starterCode: `export function validateRegistrationForm(formData) {\n  // TODO: Напиши свій розв'язок\n  return { isValid: false, errors: [] };\n}`,
         fallbackFn: m6.validateRegistrationForm,
         cases: [
@@ -1216,7 +1216,7 @@ export const workoutCatalog = [
           'Якщо монстр живий — він контратакує героя: max(5, monster.attack - hero.armor).'
         ],
         examples: 'rpgCombatTurn({ hp: 50, maxHp: 100, attack: 20, armor: 5 }, { hp: 30, attack: 15, armor: 5 }, "attack")',
-        theoryHint: '💡 <b>Здоровʼя персонажів:</b> <code>hero.hp = Math.min(hero.maxHp, hero.hp + 30);</code>',
+        theoryHint: '💡 <b>Лікування персонажа:</b> Зверніть увагу, що при відновленні здоровʼя воно не повинно перевищувати максимальний показник maxHp героя.',
         starterCode: `export function rpgCombatTurn(hero, monster, action) {\n  // TODO: Напиши свій розв'язок\n  return null;\n}`,
         fallbackFn: m6.rpgCombatTurn,
         cases: [
@@ -1254,7 +1254,7 @@ export const workoutCatalog = [
           'hasResidentPass дає 0 грн.'
         ],
         examples: 'smartParkingMeter("10:00", "12:30") => 90\nsmartParkingMeter("10:00", "12:30", true) => 30',
-        theoryHint: '💡 <b>Переведення у хвилини:</b> <code>const [h, m] = str.split(":").map(Number); return h * 60 + m;</code>',
+        theoryHint: '💡 <b>Часовий розрахунок:</b> Переведіть обидва часи у загальну кількість хвилин від початку доби, щоб легко знайти різницю.',
         starterCode: `export function smartParkingMeter(entryTimeStr, exitTimeStr, isElectricCar = false, hasResidentPass = false) {\n  // TODO: Напиши свій розв'язок\n  return null;\n}`,
         fallbackFn: m6.smartParkingMeter,
         cases: [
@@ -1293,7 +1293,7 @@ export const workoutCatalog = [
           'Вердикт: >= 70 BLOCK, >= 35 FLAG_FOR_REVIEW, інакше APPROVE.'
         ],
         examples: 'antiFraudTransactionAnalyzer({ amount: 100, country: "UA" }, { avgAmount: 100, homeCountry: "UA", isVerified: true }) => { action: "APPROVE", riskScore: 0 }',
-        theoryHint: '💡 <b>Антифрод скоринг:</b> Почніть з <code>let riskScore = 0; const flags = [];</code> та накопичуйте бали.',
+        theoryHint: '💡 <b>Система скорингу:</b> Ініціалізуйте лічильник балів ризику та список прапорців, по черзі перевіряючи кожне підозріле правило.',
         starterCode: `export function antiFraudTransactionAnalyzer(transaction, userHistory) {\n  // TODO: Напиши свій розв'язок\n  return { action: 'BLOCK', riskScore: 100, flags: [] };\n}`,
         fallbackFn: m6.antiFraudTransactionAnalyzer,
         cases: [

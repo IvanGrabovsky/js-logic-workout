@@ -69,13 +69,8 @@
  * @returns {number | null}
  */
 export function parseAgeFromPrompt(input) {
-  if (input === null || typeof input !== 'string') return null;
-  const trimmed = input.trim();
-  if (trimmed === '') return null;
-  const num = Number(trimmed);
-  if (Number.isNaN(num) || !Number.isInteger(num) || num < 0) return null;
-
-  return num;
+  // TODO: Напиши свій розв'язок
+  return null;
 }
 
 /**
@@ -100,11 +95,8 @@ export function parseAgeFromPrompt(input) {
  * @returns {string}
  */
 export function cleanUserNickname(rawInput) {
-  if (rawInput === null || rawInput === undefined) return 'Anonymous';
-  const trimmed = rawInput.trim();
-  if (trimmed === '') return 'Anonymous';
-  if (trimmed.length > 15) return trimmed.slice(0, 15);
-  return trimmed;
+  // TODO: Напиши свій розв'язок
+  return '';
 }
 
 /**
@@ -132,13 +124,8 @@ export function cleanUserNickname(rawInput) {
  * @returns {number | string}
  */
 export function safeSumPrompt(promptA, promptB) {
-  const trimmedA = promptA?.trim();
-  const trimmedB = promptB?.trim();
-  if (trimmedA === '' || trimmedB === '' || trimmedA === null || trimmedB === null) return 'Помилка: введення скасовано';
-  const numA = Number(trimmedA);
-  const numB = Number(trimmedB);
-  if (Number.isNaN(numA) || Number.isNaN(numB)) return 'Помилка: невірне число';
-  return numA + numB;
+  // TODO: Напиши свій розв'язок
+  return 0;
 }
 
 /**
