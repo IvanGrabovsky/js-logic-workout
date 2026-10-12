@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JS Logic Workout: Інтерактивний тренажер та лабораторія</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --bg: #090d16;
@@ -79,6 +80,41 @@
       background: rgba(245, 158, 11, 0.12);
       color: var(--accent);
       border-color: rgba(245, 158, 11, 0.25);
+    }
+    .badge-online {
+      background: rgba(16, 185, 129, 0.14);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.35);
+      font-weight: 700;
+      cursor: help;
+      transition: all 0.2s ease;
+    }
+    .badge-online:hover {
+      background: rgba(16, 185, 129, 0.22);
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+    .online-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #10b981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse-online 2s infinite ease-in-out;
+    }
+    @keyframes pulse-online {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+      70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
     }
 
     /* Top Tabs */
@@ -552,9 +588,13 @@
     <header>
       <div class="header-title-box">
         <h1>JS Logic, Types & Operators Workout</h1>
-        <p>Інтерактивний тренажер для студентів: редагуйте код прямо в браузері, тестуйте розв'язки на уроці без зайвих підказок IDE</p>
+        <p>Інтерактивний тренажер для студентів: редагуйте код прямо в браузері, тестуйте розв'язки на практиці без зайвих підказок IDE</p>
       </div>
       <div class="header-badges">
+        <span class="badge badge-online" id="onlineBadge" title="Реальні відвідувачі онлайн на сайті прямо зараз">
+          <span class="online-dot"></span>
+          <span id="onlineCountText">1 онлайн</span>
+        </span>
         <span class="badge">🎓 Студентський практикум</span>
         <span class="badge">⚡ In-Browser Sandbox</span>
         <span class="badge badge-accent">🔥 60 Завдань</span>
@@ -1419,8 +1459,62 @@
       renderTasksList();
     };
 
+    // Realtime Online Presence Tracker
+    function initOnlinePresence() {
+      const badgeText = document.getElementById('onlineCountText');
+      if (!badgeText) return;
+
+      const SUPABASE_URL = 'https://swuqfhsvpqxwmlhapvbj.supabase.co';
+      const SUPABASE_ANON = 'sb_publishable_ANkMMucQReBWclnnuS6t1A_k07o2XAq';
+
+      const updateCountDisplay = (count) => {
+        const safeCount = Math.max(1, count || 1);
+        badgeText.textContent = `${safeCount} онлайн`;
+      };
+
+      // Initial local fallback
+      updateCountDisplay(1);
+
+      if (typeof window.supabase === 'undefined') {
+        setTimeout(initOnlinePresence, 500);
+        return;
+      }
+
+      try {
+        const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        let visitorId = sessionStorage.getItem('js_workout_visitor_id');
+        if (!visitorId) {
+          visitorId = 'vis_' + Math.random().toString(36).substring(2, 10);
+          sessionStorage.setItem('js_workout_visitor_id', visitorId);
+        }
+
+        const channel = client.channel('workout-live-users', {
+          config: { presence: { key: visitorId } }
+        });
+
+        const syncPresence = () => {
+          const state = channel.presenceState();
+          const count = Object.keys(state).length;
+          updateCountDisplay(count);
+        };
+
+        channel
+          .on('presence', { event: 'sync' }, syncPresence)
+          .on('presence', { event: 'join' }, syncPresence)
+          .on('presence', { event: 'leave' }, syncPresence)
+          .subscribe(async (status) => {
+            if (status === 'SUBSCRIBED') {
+              await channel.track({ online_at: Date.now() });
+            }
+          });
+      } catch (err) {
+        console.warn('Realtime presence notice:', err);
+      }
+    }
+
     // Initialize UI on load
     initTrainerUI();
+    initOnlinePresence();
   </script>
 </body>
 </html>
